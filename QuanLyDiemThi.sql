@@ -1,0 +1,39 @@
+-- Tạo cơ sở dữ liệu quản lý điểm thi
+CREATE DATABASE QuanLyDiemThi;
+USE QuanLyDiemThi;
+
+CREATE TABLE HocSinh (
+    MaHS VARCHAR(20) PRIMARY KEY,
+    TenHS VARCHAR(50),
+    NgaySinh DATETIME,
+    Lop VARCHAR(20),
+    GT VARCHAR(20)
+);
+
+-- Tạo bảng này trước để MonHoc có thể tham chiếu MaGV ngay khi được tạo.
+CREATE TABLE GiaoVien (
+    MaGV VARCHAR(20) PRIMARY KEY,
+    TenGV VARCHAR(50),
+    SDT VARCHAR(10)
+);
+
+CREATE TABLE MonHoc (
+    MaMH VARCHAR(20) PRIMARY KEY,
+    TenMH VARCHAR(50),
+    MaGV VARCHAR(20),
+    CONSTRAINT FK_MonHoc_GiaoVien
+        FOREIGN KEY (MaGV) REFERENCES GiaoVien(MaGV)
+);
+
+CREATE TABLE BangDiem (
+    MaHS VARCHAR(20),
+    -- Dùng cùng kiểu/độ dài với MonHoc.MaMH để tạo khóa ngoại nhất quán.
+    MaMH VARCHAR(20),
+    DiemThi INT,
+    NgayKT DATETIME,
+    PRIMARY KEY (MaHS, MaMH),
+    CONSTRAINT FK_BangDiem_HocSinh
+        FOREIGN KEY (MaHS) REFERENCES HocSinh(MaHS),
+    CONSTRAINT FK_BangDiem_MonHoc
+        FOREIGN KEY (MaMH) REFERENCES MonHoc(MaMH)
+);
